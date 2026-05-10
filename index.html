@@ -700,36 +700,36 @@ function updateStats() {
   document.getElementById('progress-pct').textContent = pct + '%';
 }
 
-function setFilter(f, btn) {
+window.setFilter = function(f, btn) {
   currentFilter = f;
   document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   render();
 }
 
-async function toggleItem(id) {
+window.toggleItem = async function(id) {
   state.checks[id] = !state.checks[id];
   await saveState();
   render();
 }
 
-function deleteItem(secId, itemId, e) {
+window.deleteItem = async function(secId, itemId, e) {
   e.stopPropagation();
   if (!confirm('¿Eliminar este ítem?')) return;
   const sec = state.sections.find(s => s.id === secId);
   if (sec) sec.items = sec.items.filter(i => i.id !== itemId);
   delete state.checks[itemId];
-  saveState();
+  await saveState();
   render();
 }
 
-function toggleSection(secId) {
+window.toggleSection = async function(secId) {
   state.collapsed[secId] = !state.collapsed[secId];
-  saveState();
+  await saveState();
   render();
 }
 
-function addItem(secId) {
+window.addItem = async function(secId) {
   const input = document.getElementById('add-input-' + secId);
   const noteInput = document.getElementById('add-note-' + secId);
   const text = input.value.trim();
@@ -741,16 +741,16 @@ function addItem(secId) {
   sec.items.push({ id: newId, text, note: note || undefined });
   input.value = '';
   if (noteInput) noteInput.value = '';
-  saveState();
+  await saveState();
   render();
   setTimeout(() => document.getElementById('add-input-' + secId)?.focus(), 50);
 }
 
-function handleAddKey(e, secId) {
+window.handleAddKey = function(e, secId) {
   if (e.key === 'Enter') addItem(secId);
 }
 
-function addSection() {
+window.addSection = async function() {
   const titleInput = document.getElementById('new-sec-title');
   const priorityInput = document.getElementById('new-sec-priority');
   const title = titleInput.value.trim();
@@ -765,22 +765,22 @@ function addSection() {
   };
   state.sections.push(newSec);
   titleInput.value = '';
-  saveState();
+  await saveState();
   render();
 }
 
-function deleteSection(secId, e) {
+window.deleteSection = async function(secId, e) {
   e.stopPropagation();
   if (!confirm('¿Eliminar esta sección completa?')) return;
   state.sections = state.sections.filter(s => s.id !== secId);
-  saveState();
+  await saveState();
   render();
 }
 
-function resetAll() {
+window.resetAll = async function() {
   if (!confirm('¿Borrar todo el progreso marcado? (No se eliminan ítems, solo el progreso)')) return;
   state.checks = {};
-  saveState();
+  await saveState();
   render();
 }
 
