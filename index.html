@@ -529,9 +529,6 @@ window.firebaseDB = {
   checklistRef
 };
 
-</script>
-
-<script>
 const DEFAULT_DATA = [
   {
     id:"civil-docs", title:"Documentos para el matrimonio civil",
@@ -738,7 +735,7 @@ window.addItem = async function(secId) {
   const sec = state.sections.find(s => s.id === secId);
   if (!sec) return;
   const newId = secId + '_custom_' + Date.now();
-  sec.items.push({ id: newId, text, note: note || undefined });
+  sec.items.push({ id: newId, text, ...(note ? { note } : {}) });
   input.value = '';
   if (noteInput) noteInput.value = '';
   await saveState();
