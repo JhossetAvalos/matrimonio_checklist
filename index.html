@@ -494,6 +494,43 @@
 
 <main class="main" id="main"></main>
 
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
+
+import {
+  getFirestore,
+  doc,
+  getDoc,
+  setDoc
+} from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
+
+// Firebase config
+const firebaseConfig = {
+  apiKey: "AIzaSyChWArAa6QJpeW6JFKV5T_O3KgxBwsJ1Yw",
+  authDomain: "matrimonio-checklist.firebaseapp.com",
+  projectId: "matrimonio-checklist",
+  storageBucket: "matrimonio-checklist.firebasestorage.app",
+  messagingSenderId: "1018771586770",
+  appId: "1:1018771586770:web:ac3d6353deb0e3d016770b",
+  measurementId: "G-H0GB48C4M7"
+};
+
+// Inicializar Firebase
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// Documento de la checklist
+const checklistRef = doc(db, "checklists", "principal");
+
+window.firebaseDB = {
+  getDoc,
+  setDoc,
+  checklistRef
+};
+
+</script>
+
 <script>
 const DEFAULT_DATA = [
   {
@@ -584,17 +621,63 @@ const STORAGE_KEY = 'matrimonio_checklist_v2';
 let state = loadState();
 let currentFilter = 'all';
 
-function loadState() {
+async function loadState() {
+
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) return JSON.parse(raw);
-  } catch(e) {}
-  return { checks: {}, sections: JSON.parse(JSON.stringify(DEFAULT_DATA)), collapsed: {} };
+
+    const docSnap = await window.firebaseDB.getDoc(
+      window.firebaseDB.checklistRef
+    );
+
+    if (docSnap.exists()) {
+
+      state = docSnap.data();
+
+    } else {
+
+      state = {
+        checks: {},
+        sections: JSON.parse(JSON.stringify(DEFAULT_DATA)),
+        collapsed: {}
+      };
+
+      await saveState();
+
+    }
+
+  } catch(e) {
+
+    console.error(e);
+
+    state = {
+      checks: {},
+      sections: JSON.parse(JSON.stringify(DEFAULT_DATA)),
+      collapsed: {}
+    };
+
+  }
+
+  render();
+
 }
 
-function saveState() {
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {}
+async function saveState() {
+
+  try {
+
+    await window.firebaseDB.setDoc(
+      window.firebaseDB.checklistRef,
+      state
+    );
+
+  } catch(e) {
+
+    console.error("Error guardando:", e);
+
+  }
+
 }
+
 
 function getAllItems() {
   return state.sections.flatMap(s => s.items);
@@ -792,7 +875,7 @@ function esc(str) {
   return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-render();
+loadState();
 </script>
 </body>
 </html>
