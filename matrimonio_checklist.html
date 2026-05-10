@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Checklist Matrimonio</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #FAF8F3;
+    --warm-white: #FFFEFB;
+    --ink: #1C1915;
+    --ink-light: #5C5750;
+    --ink-muted: #9C9890;
+    --gold: #B8975A;
+    --gold-light: #E8D9B8;
+    --gold-pale: #F5EDD8;
+    --rose: #C4857A;
+    --rose-pale: #F5EAE8;
+    --sage: #7A9E8A;
+    --sage-pale: #EAF2EE;
+    --steel: #7A8EA0;
+    --steel-pale: #EAF0F5;
+    --border: rgba(184,151,90,0.2);
+    --border-strong: rgba(184,151,90,0.4);
+    --shadow: 0 1px 12px rgba(28,25,21,0.06);
+    --shadow-md: 0 4px 24px rgba(28,25,21,0.10);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    min-height: 100vh;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  /* ── HEADER ── */
+  .page-header {
+    background: var(--warm-white);
+    border-bottom: 1px solid var(--border);
+    padding: 2.5rem 2rem 2rem;
+    text-align: center;
+    position: relative;
+  }
+  .page-header::before {
+    content: '';
+    display: block;
+    width: 60px;
+    height: 1px;
+    background: var(--gold);
+    margin: 0 auto 1.2rem;
+  }
+  .page-header h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.4rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    color: var(--ink);
+  }
+  .page-header h1 em {
+    font-style: italic;
+    color: var(--gold);
+  }
+  .page-header p {
+    color: var(--ink-muted);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-top: 0.4rem;
+  }
+  .page-header::after {
+    content: '';
+    display: block;
+    width: 60px;
+    height: 1px;
+    background: var(--gold);
+    margin: 1.2rem auto 0;
+  }
+
+  /* ── STATS BAR ── */
+  .stats-bar {
+    display: flex;
+    gap: 0;
+    background: var(--warm-white);
+    border-bottom: 1px solid var(--border);
+  }
+  .stat-item {
+    flex: 1;
+    text-align: center;
+    padding: 1rem 0.5rem;
+    border-right: 1px solid var(--border);
+  }
+  .stat-item:last-child { border-right: none; }
+  .stat-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.8rem;
+    font-weight: 500;
+    color: var(--gold);
+    display: block;
+    line-height: 1;
+  }
+  .stat-lbl {
+    font-size: 10px;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    display: block;
+    margin-top: 4px;
+  }
+
+  /* ── PROGRESS ── */
+  .progress-wrap {
+    background: var(--warm-white);
+    padding: 1rem 2rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .progress-track {
+    flex: 1;
+    height: 3px;
+    background: var(--gold-light);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--gold), var(--rose));
+    border-radius: 2px;
+    transition: width 0.5s ease;
+    width: 0%;
+  }
+  .progress-pct {
+    font-size: 11px;
+    color: var(--gold);
+    font-weight: 500;
+    min-width: 32px;
+    text-align: right;
+  }
+
+  /* ── FILTERS ── */
+  .filters {
+    padding: 0.9rem 2rem;
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    background: var(--cream);
+    border-bottom: 1px solid var(--border);
+    align-items: center;
+  }
+  .filter-lbl {
+    font-size: 10px;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    margin-right: 4px;
+  }
+  .filter-btn {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    border: 1px solid var(--border-strong);
+    background: transparent;
+    color: var(--ink-light);
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: 0.02em;
+  }
+  .filter-btn:hover { background: var(--gold-pale); border-color: var(--gold); color: var(--ink); }
+  .filter-btn.active { background: var(--gold); border-color: var(--gold); color: white; }
+
+  /* ── MAIN LAYOUT ── */
+  .main { max-width: 780px; margin: 0 auto; padding: 1.5rem 1.25rem 4rem; }
+
+  /* ── SECTION ── */
+  .section {
+    background: var(--warm-white);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    margin-bottom: 1rem;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+  .sec-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 13px 16px;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.15s;
+  }
+  .sec-header:hover { background: var(--gold-pale); }
+  .sec-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .dot-urgent { background: var(--rose); }
+  .dot-normal { background: var(--steel); }
+  .dot-later  { background: var(--sage); }
+  .sec-title-wrap { flex: 1; }
+  .sec-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--ink);
+    line-height: 1.2;
+  }
+  .sec-sub {
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    margin-top: 1px;
+  }
+  .sec-pill {
+    font-size: 10px;
+    padding: 2px 9px;
+    border-radius: 20px;
+    letter-spacing: 0.04em;
+    font-weight: 500;
+  }
+  .pill-urgent { background: var(--rose-pale); color: var(--rose); }
+  .pill-normal { background: var(--steel-pale); color: var(--steel); }
+  .pill-later  { background: var(--sage-pale); color: var(--sage); }
+  .sec-count { font-size: 11px; color: var(--ink-muted); min-width: 28px; text-align: right; }
+  .sec-chevron {
+    font-size: 13px;
+    color: var(--ink-muted);
+    transition: transform 0.2s;
+    flex-shrink: 0;
+  }
+  .section.collapsed .sec-chevron { transform: rotate(-90deg); }
+  .section.collapsed .sec-body { display: none; }
+  .sec-mini-bar {
+    height: 2px;
+    background: var(--gold-light);
+  }
+  .sec-mini-fill {
+    height: 100%;
+    background: var(--gold);
+    transition: width 0.4s ease;
+  }
+
+  /* ── ITEMS ── */
+  .sec-body {}
+  .item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 11px 16px;
+    border-top: 1px solid var(--border);
+    cursor: pointer;
+    transition: background 0.12s;
+    position: relative;
+  }
+  .item:hover { background: var(--gold-pale); }
+  .item.done { background: #FDFCF8; }
+  .check {
+    width: 18px; height: 18px;
+    border: 1.5px solid var(--border-strong);
+    border-radius: 3px;
+    flex-shrink: 0;
+    margin-top: 1px;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s;
+    background: white;
+  }
+  .item.done .check {
+    background: var(--gold);
+    border-color: var(--gold);
+  }
+  .check-mark {
+    width: 10px; height: 7px;
+    border-left: 1.5px solid white;
+    border-bottom: 1.5px solid white;
+    transform: rotate(-45deg) translateY(-1px);
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+  .item.done .check-mark { opacity: 1; }
+  .item-body { flex: 1; min-width: 0; }
+  .item-text {
+    font-size: 13.5px;
+    color: var(--ink);
+    line-height: 1.4;
+    transition: color 0.15s;
+  }
+  .item.done .item-text {
+    text-decoration: line-through;
+    color: var(--ink-muted);
+  }
+  .item-note {
+    font-size: 11.5px;
+    color: var(--ink-muted);
+    margin-top: 3px;
+    line-height: 1.4;
+    transition: color 0.15s;
+  }
+  .item.done .item-note { color: var(--ink-muted); opacity: 0.6; }
+  .tags { display: inline-flex; gap: 4px; margin-left: 6px; vertical-align: middle; }
+  .tag {
+    font-size: 10px;
+    padding: 1px 7px;
+    border-radius: 10px;
+    letter-spacing: 0.03em;
+    font-weight: 500;
+  }
+  .tag-doc   { background: #EEF4FF; color: #5577CC; }
+  .tag-pago  { background: var(--sage-pale); color: var(--sage); }
+  .tag-urg   { background: var(--rose-pale); color: var(--rose); }
+  .del-btn {
+    opacity: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--ink-muted);
+    font-size: 15px;
+    padding: 2px 4px;
+    border-radius: 4px;
+    flex-shrink: 0;
+    transition: all 0.15s;
+    line-height: 1;
+  }
+  .item:hover .del-btn { opacity: 1; }
+  .del-btn:hover { background: var(--rose-pale); color: var(--rose); }
+
+  /* ── ADD ITEM ROW ── */
+  .add-row {
+    display: flex;
+    gap: 8px;
+    padding: 10px 14px;
+    border-top: 1px dashed var(--border-strong);
+    background: var(--gold-pale);
+    align-items: center;
+  }
+  .add-row input[type="text"] {
+    flex: 1;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    border: 1px solid var(--border-strong);
+    border-radius: 3px;
+    padding: 6px 10px;
+    background: white;
+    color: var(--ink);
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .add-row input[type="text"]:focus { border-color: var(--gold); }
+  .add-row input::placeholder { color: var(--ink-muted); font-style: italic; }
+  .add-item-btn {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    padding: 6px 13px;
+    border-radius: 3px;
+    border: 1px solid var(--gold);
+    background: var(--gold);
+    color: white;
+    cursor: pointer;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .add-item-btn:hover { background: #A07840; border-color: #A07840; }
+
+  /* ── ADD SECTION ── */
+  .add-section-wrap {
+    margin-top: 1.5rem;
+    border: 1px dashed var(--border-strong);
+    border-radius: 2px;
+    background: white;
+    padding: 1.2rem 1.4rem;
+  }
+  .add-section-wrap h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--ink-light);
+    margin-bottom: 10px;
+  }
+  .add-section-fields { display: flex; gap: 8px; flex-wrap: wrap; align-items: flex-end; }
+  .field-group { display: flex; flex-direction: column; gap: 4px; }
+  .field-group label { font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-muted); }
+  .add-section-fields input[type="text"],
+  .add-section-fields select {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    border: 1px solid var(--border-strong);
+    border-radius: 3px;
+    padding: 7px 10px;
+    background: white;
+    color: var(--ink);
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .add-section-fields input[type="text"]:focus,
+  .add-section-fields select:focus { border-color: var(--gold); }
+  .add-section-fields input[type="text"] { min-width: 240px; }
+  .add-section-btn {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    padding: 7px 16px;
+    border-radius: 3px;
+    border: 1px solid var(--border-strong);
+    background: white;
+    color: var(--ink-light);
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.15s;
+    height: 35px;
+  }
+  .add-section-btn:hover { background: var(--gold); border-color: var(--gold); color: white; }
+
+  /* ── FOOTER NOTE ── */
+  .footer-note {
+    text-align: center;
+    color: var(--ink-muted);
+    font-size: 11px;
+    margin-top: 2rem;
+    letter-spacing: 0.04em;
+  }
+  .footer-note span { color: var(--gold); }
+
+  /* ── RESET BTN ── */
+  .top-actions {
+    display: flex;
+    justify-content: flex-end;
+    padding: 0.6rem 1.25rem 0;
+    max-width: 780px;
+    margin: 0 auto;
+  }
+  .reset-btn {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    padding: 5px 12px;
+    border-radius: 20px;
+    border: 1px solid var(--border-strong);
+    background: transparent;
+    color: var(--ink-muted);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .reset-btn:hover { background: var(--rose-pale); color: var(--rose); border-color: var(--rose); }
+
+  @media (max-width: 600px) {
+    .stats-bar { flex-wrap: wrap; }
+    .stat-item { min-width: 50%; border-right: none; border-bottom: 1px solid var(--border); }
+    .page-header h1 { font-size: 1.8rem; }
+    .add-section-fields input[type="text"] { min-width: 100%; }
+    .progress-wrap { padding: 0.8rem 1rem; }
+    .filters { padding: 0.7rem 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<header class="page-header">
+  <h1>Nuestro <em>Matrimonio</em></h1>
+  <p>Civil &nbsp;·&nbsp; Religioso (una semana después) &nbsp;·&nbsp; Perú</p>
+</header>
+
+<div class="stats-bar">
+  <div class="stat-item"><span class="stat-num" id="s-total">0</span><span class="stat-lbl">Total</span></div>
+  <div class="stat-item"><span class="stat-num" id="s-done">0</span><span class="stat-lbl">Listo</span></div>
+  <div class="stat-item"><span class="stat-num" id="s-pend">0</span><span class="stat-lbl">Pendiente</span></div>
+  <div class="stat-item"><span class="stat-num" id="s-pct">0%</span><span class="stat-lbl">Avance</span></div>
+</div>
+
+<div class="progress-wrap">
+  <span style="font-size:11px;color:var(--ink-muted);letter-spacing:0.05em;text-transform:uppercase">Progreso</span>
+  <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+  <span class="progress-pct" id="progress-pct">0%</span>
+</div>
+
+<div class="filters">
+  <span class="filter-lbl">Ver:</span>
+  <button class="filter-btn active" onclick="setFilter('all',this)">Todo</button>
+  <button class="filter-btn" onclick="setFilter('pending',this)">Pendiente</button>
+  <button class="filter-btn" onclick="setFilter('done',this)">Listo</button>
+  <button class="filter-btn" onclick="setFilter('urgent',this)">Prioritario</button>
+</div>
+
+<div class="top-actions">
+  <button class="reset-btn" onclick="resetAll()">↺ Borrar progreso</button>
+</div>
+
+<main class="main" id="main"></main>
+
+<script>
+const DEFAULT_DATA = [
+  {
+    id:"civil-docs", title:"Documentos para el matrimonio civil",
+    priority:"urgent", sub:"Civil · Municipalidad",
+    items:[
+      {id:"c1", text:"DNI vigente de ambos", note:"Verificar vencimiento — si vence pronto, renovar en Reniec"},
+      {id:"c2", text:"Partida de nacimiento de ambos — original y copia", note:"Solicitar en Reniec o municipalidad de nacimiento. Vigencia: 3 meses", tags:["doc"]},
+      {id:"c3", text:"Certificado de soltería de ambos", note:"En Reniec o municipalidad. Si hubo matrimonio anterior, adjuntar acta de divorcio/defunción", tags:["doc"]},
+      {id:"c4", text:"Certificado médico prenupcial de ambos", note:"Análisis de sangre + examen médico. Lo emiten clínicas con convenio municipal", tags:["doc"]},
+      {id:"c5", text:"2 testigos con DNI vigente (mayores de 18)", note:"No necesitan ser familiares. Coordinar disponibilidad para el día"},
+    ]
+  },
+  {
+    id:"civil-tramite", title:"Trámite en la municipalidad",
+    priority:"urgent", sub:"Civil · Trámite administrativo",
+    items:[
+      {id:"t1", text:"Elegir municipalidad según domicilio registrado", note:"San Isidro, Miraflores u otra según tu DNI. Confirmar que el domicilio esté actualizado"},
+      {id:"t2", text:"Solicitar cita en el área de Registro Civil", note:"Muchas municipalidades ya aceptan citas online"},
+      {id:"t3", text:"Presentar expediente completo y pagar tasas", note:"El monto varía por municipalidad — pedir tarifario vigente", tags:["pago"]},
+      {id:"t4", text:"Publicación de edictos matrimoniales", note:"⚠️ Plazo legal: 15 días hábiles obligatorios. No se puede reducir. Inicia al presentar el expediente", tags:["urg"]},
+      {id:"t5", text:"Confirmar fecha, hora y lugar de la ceremonia civil", note:"Coordinar con el funcionario del Registro Civil"},
+      {id:"t6", text:"Preguntar si ofrecen ceremonia externa (fuera del local)", note:"Algunos municipios lo permiten con costo adicional", tags:["pago"]},
+    ]
+  },
+  {
+    id:"religioso-docs", title:"Documentos para el matrimonio religioso",
+    priority:"urgent", sub:"Religioso · Parroquia",
+    items:[
+      {id:"r1", text:"Partida de bautismo de ambos — original reciente", note:"Pedir en la parroquia donde se bautizaron. Vigencia canónica: 6 meses", tags:["doc"]},
+      {id:"r2", text:"Partida de confirmación de ambos", note:"También en la parroquia del sacramento. Requisito de la Iglesia Católica", tags:["doc"]},
+      {id:"r3", text:"Certificado de soltería eclesiástica de ambos", note:"Se tramita en la diócesis o directamente en la parroquia. Consultar proceso", tags:["doc"]},
+      {id:"r4", text:"Acta del matrimonio civil (copia)", note:"La parroquia la necesita para validar el matrimonio canónico", tags:["doc"]},
+    ]
+  },
+  {
+    id:"religioso-tramite", title:"Trámite parroquial y preparación",
+    priority:"normal", sub:"Religioso · Coordinación",
+    items:[
+      {id:"p1", text:"Elegir parroquia y reunirse con el párroco", note:"Confirmar disponibilidad de la fecha. Con 3+ meses hay buenas opciones"},
+      {id:"p2", text:"Inscribirse en el curso prematrimonial", note:"⚠️ Obligatorio. Suelen durar 4–8 semanas. Consultar próximas fechas de inicio", tags:["urg"]},
+      {id:"p3", text:"Confirmar padrinos de la ceremonia religiosa", note:"Deben ser casados por la Iglesia (según criterio del párroco)"},
+      {id:"p4", text:"Coordinar música sacra / coro", note:"Preguntar si la parroquia tiene coro propio o si se puede contratar externo", tags:["pago"]},
+      {id:"p5", text:"Ensayo general de la ceremonia", note:"Acordar con el párroco — suele ser 1–2 días antes de la fecha"},
+    ]
+  },
+  {
+    id:"venue", title:"Venue para la recepción",
+    priority:"urgent", sub:"Recepción · Sin confirmar",
+    items:[
+      {id:"v1", text:"Definir estilo: local cerrado, jardín, hacienda, rooftop…", note:"Para menos de 50 personas hay buenas opciones en Miraflores, San Isidro, Barranco"},
+      {id:"v2", text:"Cotizar mínimo 3 venues y comparar", note:"Pedir precio por persona. Verificar si incluye catering o solo alquiler", tags:["pago"]},
+      {id:"v3", text:"Verificar disponibilidad exacta de la fecha del religioso", note:"Los venues de fin de semana se reservan con 6+ meses de anticipación"},
+      {id:"v4", text:"Firmar contrato y pagar adelanto del venue", note:"Leer penalidades por cancelación y política de cambio de fecha", tags:["pago"]},
+    ]
+  },
+  {
+    id:"logistica", title:"Logística de la recepción",
+    priority:"normal", sub:"Recepción · Proveedores",
+    items:[
+      {id:"l1", text:"Catering / menú", note:"Cotizar con el venue o proveedor externo. Para 50 personas pedir precio por cubierto", tags:["pago"]},
+      {id:"l2", text:"Fotógrafo y/o videógrafo", note:"Los buenos fotógrafos se agendan con anticipación — pedir portafolio y referencias", tags:["pago"]},
+      {id:"l3", text:"Música para la recepción (DJ, banda o playlist)", note:"Para menos de 50 personas un DJ íntimo o playlist curada funciona muy bien", tags:["pago"]},
+      {id:"l4", text:"Vestido de novia", note:"Los vestidos a medida pueden tardar 2–3 meses en confeccionarse"},
+      {id:"l5", text:"Traje del novio", note:"Alquilar o confeccionar con al menos 4–6 semanas de anticipación"},
+      {id:"l6", text:"Argollas / anillos de matrimonio", note:"Cotizar en joyerías de confianza. Pedir certificado de autenticidad del material"},
+      {id:"l7", text:"Lista de invitados definitiva", note:"Base para todas las demás coordinaciones (tarjetas, catering, sillas, etc.)"},
+      {id:"l8", text:"Tarjetas o invitaciones", note:"Diseño + impresión: 3–4 semanas. Enviar con al menos 4–6 semanas de anticipación", tags:["pago"]},
+      {id:"l9", text:"Torta de matrimonio", note:"Reservar con pastelería con anticipación. Definir sabor, diseño y tamaño", tags:["pago"]},
+      {id:"l10", text:"Ramos y arreglos florales (civil y religioso)", note:"Coordinar estética de ambas ceremonias con una florería de confianza", tags:["pago"]},
+      {id:"l11", text:"Transporte entre venues", note:"Civil → donde se cambian → iglesia → recepción. Para 50 personas: 1–2 autos o minibús"},
+    ]
+  },
+  {
+    id:"extras", title:"Detalles finales y post-matrimonio",
+    priority:"later", sub:"Después · No urgente",
+    items:[
+      {id:"e1", text:"Viaje de luna de miel", note:"Si es al exterior, verificar vigencia del pasaporte con anticipación", tags:["pago"]},
+      {id:"e2", text:"Lista de regalos o cuenta para aporte", note:"Muchas parejas usan Yape / transferencia directa o lista en tienda"},
+      {id:"e3", text:"Actualizar estado civil en Reniec tras el civil", note:"Llevar el acta de matrimonio a la oficina Reniec más cercana"},
+      {id:"e4", text:"Actualizar beneficiarios: EPS, AFP, seguros de vida", note:"Notificar a cada proveedor con copia del acta de matrimonio"},
+    ]
+  }
+];
+
+const STORAGE_KEY = 'matrimonio_checklist_v2';
+
+let state = loadState();
+let currentFilter = 'all';
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch(e) {}
+  return { checks: {}, sections: JSON.parse(JSON.stringify(DEFAULT_DATA)), collapsed: {} };
+}
+
+function saveState() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {}
+}
+
+function getAllItems() {
+  return state.sections.flatMap(s => s.items);
+}
+
+function updateStats() {
+  const all = getAllItems();
+  const total = all.length;
+  const done = all.filter(i => state.checks[i.id]).length;
+  const pct = total ? Math.round(done/total*100) : 0;
+  document.getElementById('s-total').textContent = total;
+  document.getElementById('s-done').textContent = done;
+  document.getElementById('s-pend').textContent = total - done;
+  document.getElementById('s-pct').textContent = pct + '%';
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-pct').textContent = pct + '%';
+}
+
+function setFilter(f, btn) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  render();
+}
+
+function toggleItem(id) {
+  state.checks[id] = !state.checks[id];
+  saveState();
+  render();
+}
+
+function deleteItem(secId, itemId, e) {
+  e.stopPropagation();
+  if (!confirm('¿Eliminar este ítem?')) return;
+  const sec = state.sections.find(s => s.id === secId);
+  if (sec) sec.items = sec.items.filter(i => i.id !== itemId);
+  delete state.checks[itemId];
+  saveState();
+  render();
+}
+
+function toggleSection(secId) {
+  state.collapsed[secId] = !state.collapsed[secId];
+  saveState();
+  render();
+}
+
+function addItem(secId) {
+  const input = document.getElementById('add-input-' + secId);
+  const noteInput = document.getElementById('add-note-' + secId);
+  const text = input.value.trim();
+  if (!text) { input.focus(); return; }
+  const note = noteInput ? noteInput.value.trim() : '';
+  const sec = state.sections.find(s => s.id === secId);
+  if (!sec) return;
+  const newId = secId + '_custom_' + Date.now();
+  sec.items.push({ id: newId, text, note: note || undefined });
+  input.value = '';
+  if (noteInput) noteInput.value = '';
+  saveState();
+  render();
+  setTimeout(() => document.getElementById('add-input-' + secId)?.focus(), 50);
+}
+
+function handleAddKey(e, secId) {
+  if (e.key === 'Enter') addItem(secId);
+}
+
+function addSection() {
+  const titleInput = document.getElementById('new-sec-title');
+  const priorityInput = document.getElementById('new-sec-priority');
+  const title = titleInput.value.trim();
+  if (!title) { titleInput.focus(); return; }
+  const priority = priorityInput.value;
+  const subs = { urgent: 'Personalizado · Prioritario', normal: 'Personalizado · Normal', later: 'Personalizado · Después' };
+  const newSec = {
+    id: 'custom_' + Date.now(),
+    title, priority,
+    sub: subs[priority],
+    items: []
+  };
+  state.sections.push(newSec);
+  titleInput.value = '';
+  saveState();
+  render();
+}
+
+function deleteSection(secId, e) {
+  e.stopPropagation();
+  if (!confirm('¿Eliminar esta sección completa?')) return;
+  state.sections = state.sections.filter(s => s.id !== secId);
+  saveState();
+  render();
+}
+
+function resetAll() {
+  if (!confirm('¿Borrar todo el progreso marcado? (No se eliminan ítems, solo el progreso)')) return;
+  state.checks = {};
+  saveState();
+  render();
+}
+
+function render() {
+  const main = document.getElementById('main');
+  let html = '';
+
+  state.sections.forEach(sec => {
+    const collapsed = state.collapsed[sec.id];
+    const dotClass = sec.priority === 'urgent' ? 'dot-urgent' : sec.priority === 'later' ? 'dot-later' : 'dot-normal';
+    const pillClass = sec.priority === 'urgent' ? 'pill-urgent' : sec.priority === 'later' ? 'pill-later' : 'pill-normal';
+    const pillText = sec.priority === 'urgent' ? 'Prioritario' : sec.priority === 'later' ? 'Después' : 'Normal';
+
+    let items = sec.items;
+    if (currentFilter === 'pending') items = items.filter(i => !state.checks[i.id]);
+    if (currentFilter === 'done')    items = items.filter(i => state.checks[i.id]);
+    if (currentFilter === 'urgent')  items = sec.priority === 'urgent' ? sec.items.filter(i => !state.checks[i.id]) : [];
+
+    const secDone = sec.items.filter(i => state.checks[i.id]).length;
+    const secTotal = sec.items.length;
+    const secPct = secTotal ? Math.round(secDone/secTotal*100) : 0;
+
+    if ((currentFilter === 'urgent' || currentFilter === 'pending' || currentFilter === 'done') && items.length === 0) return;
+
+    html += `<div class="section ${collapsed ? 'collapsed' : ''}" id="sec-${sec.id}">`;
+    html += `<div class="sec-header" onclick="toggleSection('${sec.id}')">
+      <div class="sec-dot ${dotClass}"></div>
+      <div class="sec-title-wrap">
+        <div class="sec-title">${esc(sec.title)}</div>
+        <div class="sec-sub">${esc(sec.sub)}</div>
+      </div>
+      <span class="sec-pill ${pillClass}">${pillText}</span>
+      <span class="sec-count">${secDone}/${secTotal}</span>
+      <span class="sec-chevron">▾</span>
+      <button class="del-btn" onclick="deleteSection('${sec.id}',event)" title="Eliminar sección">✕</button>
+    </div>`;
+    html += `<div class="sec-mini-bar"><div class="sec-mini-fill" style="width:${secPct}%"></div></div>`;
+    html += `<div class="sec-body">`;
+
+    items.forEach(item => {
+      const done = state.checks[item.id];
+      let tagsHtml = '';
+      if (item.tags && item.tags.length) {
+        const tagLabels = { doc:'documento', pago:'pago', urg:'urgente' };
+        tagsHtml = '<span class="tags">' + item.tags.map(t => `<span class="tag tag-${t}">${tagLabels[t]||t}</span>`).join('') + '</span>';
+      }
+      html += `<div class="item ${done ? 'done' : ''}" onclick="toggleItem('${item.id}')">
+        <div class="check"><div class="check-mark"></div></div>
+        <div class="item-body">
+          <div class="item-text">${esc(item.text)}${tagsHtml}</div>
+          ${item.note ? `<div class="item-note">${esc(item.note)}</div>` : ''}
+        </div>
+        <button class="del-btn" onclick="deleteItem('${sec.id}','${item.id}',event)" title="Eliminar">✕</button>
+      </div>`;
+    });
+
+    // Add item row (always visible, filtered doesn't hide it)
+    if (currentFilter === 'all' || currentFilter === 'pending') {
+      html += `<div class="add-row">
+        <input type="text" id="add-input-${sec.id}" placeholder="Añadir ítem…" onkeydown="handleAddKey(event,'${sec.id}')">
+        <input type="text" id="add-note-${sec.id}" placeholder="Nota (opcional)" style="width:180px;flex:none" onkeydown="handleAddKey(event,'${sec.id}')">
+        <button class="add-item-btn" onclick="addItem('${sec.id}')">+ Añadir</button>
+      </div>`;
+    }
+
+    html += `</div></div>`;
+  });
+
+  // Add section block
+  html += `<div class="add-section-wrap">
+    <h3>+ Nueva sección personalizada</h3>
+    <div class="add-section-fields">
+      <div class="field-group">
+        <label>Nombre de la sección</label>
+        <input type="text" id="new-sec-title" placeholder="Ej: Viaje de luna de miel" onkeydown="if(event.key==='Enter')addSection()">
+      </div>
+      <div class="field-group">
+        <label>Prioridad</label>
+        <select id="new-sec-priority">
+          <option value="urgent">Prioritario</option>
+          <option value="normal" selected>Normal</option>
+          <option value="later">Después</option>
+        </select>
+      </div>
+      <button class="add-section-btn" onclick="addSection()">Crear sección</button>
+    </div>
+  </div>`;
+
+  html += `<p class="footer-note">Progreso guardado automáticamente · <span>Checklist matrimonio Perú</span></p>`;
+
+  main.innerHTML = html;
+  updateStats();
+}
+
+function esc(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+render();
+</script>
+</body>
+</html>
