@@ -618,7 +618,11 @@ const DEFAULT_DATA = [
 
 const STORAGE_KEY = 'matrimonio_checklist_v2';
 
-let state = loadState();
+let state = {
+  checks: {},
+  sections: JSON.parse(JSON.stringify(DEFAULT_DATA)),
+  collapsed: {}
+};
 let currentFilter = 'all';
 
 async function loadState() {
@@ -703,9 +707,9 @@ function setFilter(f, btn) {
   render();
 }
 
-function toggleItem(id) {
+async function toggleItem(id) {
   state.checks[id] = !state.checks[id];
-  saveState();
+  await saveState();
   render();
 }
 
