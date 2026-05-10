@@ -626,9 +626,7 @@ async function loadState() {
 
   try {
 
-    const docSnap = await window.firebaseDB.getDoc(
-      window.firebaseDB.checklistRef
-    );
+    const docSnap = await getDoc(checklistRef);
 
     if (docSnap.exists()) {
 
@@ -650,12 +648,6 @@ async function loadState() {
 
     console.error(e);
 
-    state = {
-      checks: {},
-      sections: JSON.parse(JSON.stringify(DEFAULT_DATA)),
-      collapsed: {}
-    };
-
   }
 
   render();
@@ -666,10 +658,7 @@ async function saveState() {
 
   try {
 
-    await window.firebaseDB.setDoc(
-      window.firebaseDB.checklistRef,
-      state
-    );
+    await setDoc(checklistRef, state);
 
   } catch(e) {
 
@@ -678,7 +667,6 @@ async function saveState() {
   }
 
 }
-
 
 function getAllItems() {
   return state.sections.flatMap(s => s.items);
